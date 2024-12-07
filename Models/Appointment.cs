@@ -1,11 +1,29 @@
-﻿namespace HairSaloonScheduler.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HairSaloonScheduler.Models
 {
 	public class Appointment
 	{
-		public Guid AppointmentId { get; set; }
-		public Guid UserId { get; set; }
-		public Guid EmployeeId { get; set; }
-		public Guid OperationId { get; set; }
-		public DateTime AppointmentDate { get; set; }
-		public string Status { get; set; }
-	}
+        [Key]
+        public Guid AppointmentId { get; set; }
+
+        [Required]
+        public DateTime AppointmentDate { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string Status { get; set; }
+
+        [Required]
+        public Guid OperationId { get; set; }
+        public Operations Operation { get; set; }
+
+        [Required]
+        public Guid EmployeeId { get; set; }
+        public Employees Employee { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
+        public User User { get; set; }
+    }
+}
