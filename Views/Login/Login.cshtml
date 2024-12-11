@@ -1,17 +1,13 @@
 ﻿@model HairSaloonScheduler.Models.User
 
-@{
-    ViewData["Title"] = "Login";
-}
-
 <div class="container mt-5">
     <h2>Login</h2>
 
     @if (ViewBag.Error != null)
     {
-            <div class="alert alert-danger">
+                <div class="alert alert-danger">
             @ViewBag.Error
-            </div>
+                </div>
     }
 
     <form asp-action="Login" method="post">

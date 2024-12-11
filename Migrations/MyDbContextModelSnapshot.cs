@@ -39,14 +39,6 @@ namespace HairSaloonScheduler.Migrations
                     b.HasKey("AdminId");
 
                     b.ToTable("admins");
-
-                    b.HasData(
-                        new
-                        {
-                            AdminId = new Guid("71cc891d-33ab-450c-adf1-1c05606ddf89"),
-                            AdminMail = "g221210034@sakarya.edu.tr",
-                            Password = "sau"
-                        });
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.Appointment", b =>
@@ -102,6 +94,12 @@ namespace HairSaloonScheduler.Migrations
                     b.Property<double>("Productivity")
                         .HasColumnType("float");
 
+                    b.Property<DateTime>("WorkEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("WorkStart")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("EmployeeId");
 
                     b.HasIndex("ExpertiseAreaId");
@@ -118,9 +116,6 @@ namespace HairSaloonScheduler.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("EmployeesEmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("OperationName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -129,8 +124,6 @@ namespace HairSaloonScheduler.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OperationId");
-
-                    b.HasIndex("EmployeesEmployeeId");
 
                     b.ToTable("operations");
                 });
@@ -203,18 +196,6 @@ namespace HairSaloonScheduler.Migrations
                         .IsRequired();
 
                     b.Navigation("ExpertiseArea");
-                });
-
-            modelBuilder.Entity("HairSaloonScheduler.Models.Operations", b =>
-                {
-                    b.HasOne("HairSaloonScheduler.Models.Employees", null)
-                        .WithMany("Abilities")
-                        .HasForeignKey("EmployeesEmployeeId");
-                });
-
-            modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>
-                {
-                    b.Navigation("Abilities");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.User", b =>

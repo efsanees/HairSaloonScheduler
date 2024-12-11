@@ -1,0 +1,58 @@
+﻿@model HairSaloonScheduler.Models.Employees
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Employee will be deleted.</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EmployeeName)
+        </dt>
+        <dd class = "col-sm-15">
+            @Html.DisplayFor(model => model.EmployeeName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ExpertiseArea)
+        </dt>
+        <dd class = "col-sm-15">
+            @Html.DisplayFor(model => model.ExpertiseArea.OperationName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Productivity)
+        </dt>
+        <dd class = "col-sm-15">
+            @Html.DisplayFor(model => model.Productivity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DailyGain)
+        </dt>
+        <dd class = "col-sm-15">
+            @Html.DisplayFor(model => model.DailyGain)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WorkStart)
+        </dt>
+        <dd class="col-sm-15">
+            @Html.DisplayFor(model => model.WorkStart)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WorkEnd)
+        </dt>
+        <dd class="col-sm-15">
+            @Html.DisplayFor(model => model.WorkEnd)
+        </dd>
+
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="EmployeeId" />
+        <input type="submit" value="Delete" class="btn btn-primary" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

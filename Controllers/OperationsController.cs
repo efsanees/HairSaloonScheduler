@@ -19,6 +19,7 @@ namespace HairSaloonScheduler.Controllers
             _context = context;
         }
 
+
         // GET: Operations
         public async Task<IActionResult> Index()
         {
@@ -45,15 +46,11 @@ namespace HairSaloonScheduler.Controllers
             return View(operations);
         }
 
-        // GET: Operations/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Operations/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OperationId,OperationName,Duration,Price")] Operations operations)
@@ -68,7 +65,7 @@ namespace HairSaloonScheduler.Controllers
             return View(operations);
         }
 
-        // GET: Operations/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.operations == null)
@@ -76,22 +73,19 @@ namespace HairSaloonScheduler.Controllers
                 return NotFound();
             }
 
-            var operations = await _context.operations.FindAsync(id);
-            if (operations == null)
+            var operation = await _context.operations.FirstOrDefaultAsync(o => o.OperationId == id);
+            if (operation == null)
             {
                 return NotFound();
             }
-            return View(operations);
+            return View(operation);
         }
 
-        // POST: Operations/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("OperationId,OperationName,Duration,Price")] Operations operations)
+        public async Task<IActionResult> Edit(Operations operations)
         {
-            if (id != operations.OperationId)
+            if (operations == null)
             {
                 return NotFound();
             }
@@ -118,41 +112,28 @@ namespace HairSaloonScheduler.Controllers
             }
             return View(operations);
         }
-
-        // GET: Operations/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        [HttpGet]
+        public IActionResult Delete(Guid id)
         {
-            if (id == null || _context.operations == null)
+            var operation = _context.operations.Find(id);
+            if (operation == null)
             {
                 return NotFound();
             }
-
-            var operations = await _context.operations
-                .FirstOrDefaultAsync(m => m.OperationId == id);
-            if (operations == null)
-            {
-                return NotFound();
-            }
-
-            return View(operations);
+            return View(operation);
         }
 
-        // POST: Operations/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Operations operation)
         {
-            if (_context.operations == null)
+            if (operation == null)
             {
-                return Problem("Entity set 'MyDbContext.operations'  is null.");
+                return NotFound();
             }
-            var operations = await _context.operations.FindAsync(id);
-            if (operations != null)
-            {
-                _context.operations.Remove(operations);
-            }
-            
-            await _context.SaveChangesAsync();
+
+            _context.operations.Remove(operation);
+            await _context.SaveChangesAsync(); 
             return RedirectToAction(nameof(Index));
         }
 

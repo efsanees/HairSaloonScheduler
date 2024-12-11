@@ -10,26 +10,29 @@
     <h4>Operations</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OperationName)
+        <dt class="col-sm-2">
+            <label asp-for="OperationName"></label>
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OperationName)
+        <dd class="col-sm-20">
+            @Model.OperationName
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Duration)
+
+        <dt class="col-sm-2">
+            <label asp-for="Duration"></label>
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Duration)
+        <dd class="col-sm-20">
+            @Model.Duration
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
+
+        <dt class="col-sm-2">
+            <label asp-for="Price"></label>
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
+        <dd class="col-sm-20">
+            @Model.Price
         </dd>
     </dl>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.OperationId">Edit</a> |
     <a asp-action="Index">Back to List</a>

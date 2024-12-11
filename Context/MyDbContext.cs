@@ -30,6 +30,7 @@ namespace HairSaloonScheduler.Context
             modelBuilder.Entity<Operations>()
                 .Property(o => o.Price)
                 .HasColumnType("decimal(18,2)");
+
         }
 
 		public DbSet<Appointment> appointments { get; set; }

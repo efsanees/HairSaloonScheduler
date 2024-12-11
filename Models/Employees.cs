@@ -20,6 +20,13 @@ namespace HairSaloonScheduler.Models
         [Range(0, double.MaxValue, ErrorMessage = "Daily gain must be a positive number.")]
         public decimal DailyGain { get; set; } = 0m;
 
-        public List<Operations> Abilities { get; set; }
+        [Required(ErrorMessage = "Work start time is required.")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime WorkStart { get; set; }
+
+        [Required(ErrorMessage = "Work end time is required.")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime WorkEnd { get; set; }
+
     }
 }
