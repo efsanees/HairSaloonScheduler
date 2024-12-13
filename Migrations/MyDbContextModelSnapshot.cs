@@ -94,11 +94,11 @@ namespace HairSaloonScheduler.Migrations
                     b.Property<double>("Productivity")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("WorkEnd")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("WorkEnd")
+                        .HasColumnType("time");
 
-                    b.Property<DateTime>("WorkStart")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("WorkStart")
+                        .HasColumnType("time");
 
                     b.HasKey("EmployeeId");
 
@@ -113,8 +113,8 @@ namespace HairSaloonScheduler.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<string>("OperationName")
                         .IsRequired()

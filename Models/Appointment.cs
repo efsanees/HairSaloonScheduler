@@ -2,8 +2,8 @@
 
 namespace HairSaloonScheduler.Models
 {
-	public class Appointment
-	{
+    public class Appointment
+    {
         [Key]
         public Guid AppointmentId { get; set; }
 
@@ -12,7 +12,7 @@ namespace HairSaloonScheduler.Models
 
         [Required]
         [StringLength(50)]
-        public string Status { get; set; }
+        public string Status { get; set; } = (AppointmentStatus.Waiting).ToString();
 
         [Required]
         public Guid OperationId { get; set; }
@@ -25,5 +25,12 @@ namespace HairSaloonScheduler.Models
         [Required]
         public Guid UserId { get; set; }
         public User User { get; set; }
+    }
+
+    public enum AppointmentStatus
+    {
+        Waiting,
+        Approved,
+        Canceled
     }
 }

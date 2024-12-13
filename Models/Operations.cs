@@ -8,7 +8,7 @@ namespace HairSaloonScheduler.Models
 		[Key]
 		public Guid OperationId { get; set; }
 		public string OperationName { get; set; }
-		public int Duration { get; set; }
+		public TimeSpan Duration { get; set; }
         public decimal Price { get; set; }
 	}
 }

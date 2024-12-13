@@ -21,12 +21,10 @@ namespace HairSaloonScheduler.Models
         public decimal DailyGain { get; set; } = 0m;
 
         [Required(ErrorMessage = "Work start time is required.")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime WorkStart { get; set; }
+        public TimeSpan WorkStart { get; set; }
 
         [Required(ErrorMessage = "Work end time is required.")]
-        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime WorkEnd { get; set; }
+        public TimeSpan WorkEnd { get; set; }
 
     }
 }

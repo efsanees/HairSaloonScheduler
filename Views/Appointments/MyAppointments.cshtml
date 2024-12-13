@@ -1,0 +1,31 @@
+﻿@model IEnumerable<HairSaloonScheduler.Models.Appointment>
+
+@{
+    ViewData["Title"] = "My Appointments";
+}
+
+<h2>My Appointments</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Operation</th>
+            <th>Employee</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var appointment in Model)
+        {
+                <tr>
+                    <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>@appointment.Status</td>
+                    <td>@appointment.Operation.OperationName</td>
+                    <td>@appointment.Employee.EmployeeName</td>
+                    <td>@appointment.Operation.Price.ToString("C")</td>
+                </tr>
+        }
+    </tbody>
+</table>
+<a asp-action="Create" class="btn btn-primary">Book New Appointment</a>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSaloonScheduler.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20241207144046_cr")]
-    partial class cr
+    [Migration("20241213143538_o")]
+    partial class o
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,14 +41,6 @@ namespace HairSaloonScheduler.Migrations
                     b.HasKey("AdminId");
 
                     b.ToTable("admins");
-
-                    b.HasData(
-                        new
-                        {
-                            AdminId = new Guid("d7b9ce2d-b94e-4517-865e-ed5634184dcf"),
-                            AdminMail = "g221210034@sakarya.edu.tr",
-                            Password = "sau"
-                        });
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.Appointment", b =>
@@ -104,6 +96,12 @@ namespace HairSaloonScheduler.Migrations
                     b.Property<double>("Productivity")
                         .HasColumnType("float");
 
+                    b.Property<TimeSpan>("WorkEnd")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("WorkStart")
+                        .HasColumnType("time");
+
                     b.HasKey("EmployeeId");
 
                     b.HasIndex("ExpertiseAreaId");
@@ -117,11 +115,8 @@ namespace HairSaloonScheduler.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("EmployeesEmployeeId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<string>("OperationName")
                         .IsRequired()
@@ -132,8 +127,6 @@ namespace HairSaloonScheduler.Migrations
 
                     b.HasKey("OperationId");
 
-                    b.HasIndex("EmployeesEmployeeId");
-
                     b.ToTable("operations");
                 });
 
@@ -143,8 +136,13 @@ namespace HairSaloonScheduler.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ConfirmPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Password")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
@@ -153,9 +151,9 @@ namespace HairSaloonScheduler.Migrations
 
                     b.Property<string>("UserMail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -200,18 +198,6 @@ namespace HairSaloonScheduler.Migrations
                         .IsRequired();
 
                     b.Navigation("ExpertiseArea");
-                });
-
-            modelBuilder.Entity("HairSaloonScheduler.Models.Operations", b =>
-                {
-                    b.HasOne("HairSaloonScheduler.Models.Employees", null)
-                        .WithMany("Abilities")
-                        .HasForeignKey("EmployeesEmployeeId");
-                });
-
-            modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>
-                {
-                    b.Navigation("Abilities");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.User", b =>

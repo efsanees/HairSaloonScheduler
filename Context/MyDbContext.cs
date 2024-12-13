@@ -38,5 +38,6 @@ namespace HairSaloonScheduler.Context
 		public DbSet<Operations> operations { get; set; }
 		public DbSet<User> users { get; set; }
 		public DbSet<Admin> admins { get; set; }
-	}
+        public DbSet<Availability> availabilities { get; set; }
+    }
 }

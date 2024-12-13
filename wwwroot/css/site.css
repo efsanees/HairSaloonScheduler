@@ -130,3 +130,16 @@ a {
         background-color: #f50057; /* Buton hover (fareyle üzerine gelince) rengi */
         border-color: #f50057;
     }
+
+.table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.form-control {
+    margin-bottom: 15px;
+}
+
+.btn {
+    margin-top: 10px;
+}
