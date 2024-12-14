@@ -4,6 +4,7 @@ using HairSaloonScheduler.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSaloonScheduler.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241214021353_ad")]
+    partial class ad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,8 +96,6 @@ namespace HairSaloonScheduler.Migrations
                         .HasColumnType("time");
 
                     b.HasKey("AvailabilityId");
-
-                    b.HasIndex("EmployeeId");
 
                     b.ToTable("availabilities");
                 });
@@ -233,17 +233,6 @@ namespace HairSaloonScheduler.Migrations
                     b.Navigation("Operation");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("HairSaloonScheduler.Models.Availability", b =>
-                {
-                    b.HasOne("HairSaloonScheduler.Models.Employees", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>

@@ -53,7 +53,7 @@ namespace HairSaloonScheduler.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EmployeeName,ExpertiseAreaId,WorkStart,WorkEnd")] Employees employees)
         {
-            if (employees!=null)
+			if (employees!=null)
             {
                 employees.EmployeeId = Guid.NewGuid();
                 if (employees.ExpertiseAreaId != null)

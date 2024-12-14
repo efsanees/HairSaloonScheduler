@@ -1,0 +1,49 @@
+﻿@model HairSaloonScheduler.Models.Statistics
+@{
+    ViewData["Title"] = "Çalışan İstatistikleri";
+}
+
+<h2>Çalışan İstatistikleri</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form method="get" asp-action="GetStatistics" asp-controller="Statistics">
+    <div class="form-group">
+        <label for="employeeId">Çalışan Seçin:</label>
+        <select id="employeeId" name="employeeId" class="form-control" required>
+            @foreach (var employee in ViewData["Employees"] as List<HairSaloonScheduler.Models.Employees>)
+            {
+                <option value="@employee.EmployeeId">@employee.EmployeeName</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="day">Tarih Seçin:</label>
+        <input type="date" id="day" name="day" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">İstatistikleri Getir</button>
+</form>
+
+@if (Model != null)
+{
+    <div class="statistics-container mt-5">
+        <h3>@Model.EmployeeId için @Model.Day.ToString("yyyy-MM-dd") Tarihindeki İstatistikler</h3>
+
+        <div class="statistic-item">
+            <strong>Çalışma Saati:</strong>
+            <span>@Model.WorkHour saat</span>
+        </div>
+
+        <div class="statistic-item">
+            <strong>Toplam Kazanç:</strong>
+            <span>@Model.Gain TL</span>
+        </div>
+    </div>
+}

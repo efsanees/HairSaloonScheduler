@@ -35,22 +35,23 @@
                     <nav class="site-navigation position-relative text-right text-lg-center" role="navigation">
 
                         <ul class="site-menu js-clone-nav mx-auto d-none d-lg-block">
-                            <li class="has-children active">
-                                <a asp-controller="Saloon" asp-action="Index" >Home</a>
-                            </li>
                             <li>
                                 <a asp-controller="Employees" asp-action="Index">Employees</a>
                             </li>
                             <li>
                                 <a asp-controller="Operations" asp-action="Index">Operations</a>
                             </li>
-                            <li><a asp-controller="Appointments" asp-action="Create">Book Appointment</a></li>
+							<li><a asp-controller="Appointments" asp-action="Create">Book Appointment</a></li>
+							<li>
+								<a asp-controller="Statistics" asp-action="GetStatistics">To Employee Statistics</a>
+							</li>
                             <li class="d-inline-block">
                                 <a asp-controller="Login" asp-action="Login" class="btn btn-primary">Login</a>
                             </li>
                             <li class="d-inline-block">
                                 <a asp-controller="Login" asp-action="SignUp" class="btn btn-primary">Sign Up</a>
                             </li>
+                            
                         </ul>
                     </nav>
                 </div>
