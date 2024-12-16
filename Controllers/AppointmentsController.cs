@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using HairSaloonScheduler.Context;
 using HairSaloonScheduler.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HairSaloonScheduler.Controllers
 {
@@ -50,7 +51,7 @@ namespace HairSaloonScheduler.Controllers
 
 			if (!appointments.Any())
 			{
-				return View("NoAppointments");
+				return BadRequest("No Appointments.");
 			}
 
 			return View(appointments);
@@ -70,7 +71,7 @@ namespace HairSaloonScheduler.Controllers
 					var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 					if (userIdClaim == null)
 					{
-						throw new Exception("User ID not found in cookie.");
+						throw new Exception("Please Login First");
 					}
 					appointment.UserId = Guid.Parse(userIdClaim.Value);
 
@@ -120,12 +121,66 @@ namespace HairSaloonScheduler.Controllers
 			return View(appointment);
 		}
 
+		[HttpPost]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Approve(Guid appointmentId)
+		{
+			try
+			{
+				var appointment = await _context.appointments
+					.FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
+
+				if (appointment == null)
+				{
+					return NotFound();
+				}
+
+				appointment.Status = AppointmentStatus.Approved.ToString();
+
+				await _context.SaveChangesAsync();
+
+				return RedirectToAction(nameof(Index));
+			}
+			catch (Exception ex)
+			{
+				ViewData["ErrorMessage"] = "Randevu onaylanırken bir hata oluştu: " + ex.Message;
+				return RedirectToAction(nameof(Index));
+			}
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Cancel(Guid appointmentId)
+		{
+			try
+			{
+				var appointment = await _context.appointments
+					.FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
+
+				if (appointment == null)
+				{
+					return NotFound();
+				}
+
+				appointment.Status = AppointmentStatus.Canceled.ToString();
+
+				await _context.SaveChangesAsync();
+
+				return RedirectToAction(nameof(Index));
+			}
+			catch (Exception ex)
+			{
+				ViewData["ErrorMessage"] = "Randevu iptal edilirken bir hata oluştu: " + ex.Message;
+				return RedirectToAction(nameof(Index));
+			}
+		}
+
 		private bool IsEmployeeAvailable([Bind("AppointmentDate,OperationId,EmployeeId")] Appointment appointment)
 		{
 			if (appointment != null)
 			{
-
-
 				var appointmentStartTime = TimeSpan.FromHours(appointment.AppointmentDate.Hour);
 				var appointmentEndTime = appointment.AppointmentDate.Add(appointment.Operation.Duration).TimeOfDay;
 
@@ -133,6 +188,7 @@ namespace HairSaloonScheduler.Controllers
                 {
                     return false;
                 }
+
                 var IsAnyAppointment = _context.availabilities
 					.FirstOrDefault(x => x.EmployeeId == appointment.EmployeeId &&
 										 x.Date == appointment.AppointmentDate.Date &&

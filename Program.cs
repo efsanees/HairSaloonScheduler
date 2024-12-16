@@ -1,26 +1,27 @@
 using HairSaloonScheduler.Context;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add DbContext and authentication services
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Mysql")));
 
-// Correct authentication scheme setup
-builder.Services.AddAuthentication("CookieAuth")
-    .AddCookie("CookieAuth", options =>
-    {
-        options.LoginPath = "/User/Login";
-        options.AccessDeniedPath = "/User/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromHours(3);
-    });
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/AdminLogin";
+        options.LogoutPath = "/Login/Logout";
+		options.AccessDeniedPath = "/Login/AdminLogin";
+		options.ExpireTimeSpan = TimeSpan.FromHours(1); 
+    });
 
 builder.Services.AddAuthorization(options =>
 {
-	options.AddPolicy("AdminOnly", policy => policy.RequireClaim("Role", "Admin"));
-	options.AddPolicy("UserOnly", policy => policy.RequireClaim("Role", "User"));
+    options.AddPolicy("Admin", policy => policy.RequireClaim("Role", "Admin")); 
 });
 
 builder.Services.AddAuthorization();

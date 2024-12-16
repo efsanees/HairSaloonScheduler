@@ -30,11 +30,12 @@ namespace HairSaloonScheduler.Controllers
             if (infos != null)
             {
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, infos.UserId.ToString()),
-            new Claim(ClaimTypes.Name, infos.Username),
-            new Claim(ClaimTypes.Email, infos.UserMail)
-        };
+                {
+                    new Claim(ClaimTypes.NameIdentifier, infos.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, infos.Username), 
+                    new Claim(ClaimTypes.Email, infos.UserMail),
+                    new Claim(ClaimTypes.Role, "User")
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
@@ -43,10 +44,9 @@ namespace HairSaloonScheduler.Controllers
                     ExpiresUtc = DateTime.UtcNow.AddHours(1)
                 };
 
-                await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-
-                return RedirectToAction("Index", "Saloon");
+                return RedirectToAction("Index", "Saloon"); 
             }
             else
             {
@@ -54,6 +54,7 @@ namespace HairSaloonScheduler.Controllers
                 return View();
             }
         }
+
 
 
         [HttpGet]
@@ -71,18 +72,17 @@ namespace HairSaloonScheduler.Controllers
                 await _context.AddAsync(user);
                 await _context.SaveChangesAsync();
 
-                // Cookie'ye kullanıcı bilgilerini ekle
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()), // UserId
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Email, user.UserMail)
-        };
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Email, user.UserMail)
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true, // Kalıcı oturum
+                    IsPersistent = true,
                     ExpiresUtc = DateTime.UtcNow.AddHours(1)
                 };
 
@@ -107,24 +107,23 @@ namespace HairSaloonScheduler.Controllers
             var infos = await _context.admins.FirstOrDefaultAsync(x => x.AdminMail == admin.AdminMail && x.Password == admin.Password);
             if (infos != null)
             {
-                // Cookie'ye admin bilgilerini ekle
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, infos.AdminId.ToString()), // AdminId
-            new Claim(ClaimTypes.Email, infos.AdminMail),
-            new Claim("Role", "Admin") // Rol bilgisi eklenebilir
-        };
+                {
+                    new Claim(ClaimTypes.NameIdentifier, infos.AdminId.ToString()), 
+                    new Claim(ClaimTypes.Email, infos.AdminMail), 
+                    new Claim(ClaimTypes.Role, "Admin") 
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = true, // Kalıcı oturum
+                    IsPersistent = true,
                     ExpiresUtc = DateTime.UtcNow.AddHours(1)
                 };
 
-                await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return RedirectToAction("AdminPanel", "Admin");
+                return RedirectToAction("AdminPanel", "Admin"); 
             }
             else
             {
@@ -133,10 +132,11 @@ namespace HairSaloonScheduler.Controllers
             }
         }
 
+
         [HttpGet]
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Oturum bilgilerini temizle
+            HttpContext.Session.Clear(); 
             return RedirectToAction("Login");
         }
 

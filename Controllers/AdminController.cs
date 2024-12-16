@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HairSaloonScheduler.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HairSaloonScheduler.Controllers
 {
@@ -8,13 +9,9 @@ namespace HairSaloonScheduler.Controllers
     {        
 
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public IActionResult AdminPanel()
         {
-            //if (string.IsNullOrEmpty(HttpContext.Session.GetString("AdminEmail")))
-            //{
-            //    return RedirectToAction("AdminLogin","Login");
-            //}
-
             return View();
         }
     }

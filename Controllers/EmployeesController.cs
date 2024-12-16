@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HairSaloonScheduler.Context;
 using HairSaloonScheduler.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace HairSaloonScheduler.Controllers
 {
@@ -43,6 +45,7 @@ namespace HairSaloonScheduler.Controllers
             return View(employees);
         }
 
+        [Authorize(Roles ="Admin")]
         public IActionResult Create()
         {
             ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName");
@@ -50,7 +53,8 @@ namespace HairSaloonScheduler.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("EmployeeName,ExpertiseAreaId,WorkStart,WorkEnd")] Employees employees)
         {
 			if (employees!=null)
@@ -70,7 +74,8 @@ namespace HairSaloonScheduler.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.employees == null)
             {
@@ -88,7 +93,8 @@ namespace HairSaloonScheduler.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Employees employees)
         {
             if (employees==null)
@@ -124,7 +130,8 @@ namespace HairSaloonScheduler.Controllers
             
         }
 
-        [HttpGet]
+		[Authorize(Roles = "Admin")]
+		[HttpGet]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null || _context.employees == null)
@@ -144,7 +151,8 @@ namespace HairSaloonScheduler.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Employees employee)
         {
             if (_context.employees == null)

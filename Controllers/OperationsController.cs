@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HairSaloonScheduler.Context;
 using HairSaloonScheduler.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HairSaloonScheduler.Controllers
 {
@@ -20,7 +21,7 @@ namespace HairSaloonScheduler.Controllers
         }
 
 
-        // GET: Operations
+        
         public async Task<IActionResult> Index()
         {
               return _context.operations != null ? 
@@ -28,7 +29,7 @@ namespace HairSaloonScheduler.Controllers
                           Problem("Entity set 'MyDbContext.operations'  is null.");
         }
 
-        // GET: Operations/Details/5
+        
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null || _context.operations == null)
@@ -45,14 +46,15 @@ namespace HairSaloonScheduler.Controllers
 
             return View(operations);
         }
-
-        public IActionResult Create()
+		[Authorize(Roles = "Admin")]
+		public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OperationId,OperationName,Duration,Price")] Operations operations)
         {
             if (operations!=null)
@@ -66,7 +68,8 @@ namespace HairSaloonScheduler.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.operations == null)
             {
@@ -82,7 +85,8 @@ namespace HairSaloonScheduler.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Operations operations)
         {
             if (operations == null)
@@ -113,7 +117,8 @@ namespace HairSaloonScheduler.Controllers
             return View(operations);
         }
         [HttpGet]
-        public IActionResult Delete(Guid id)
+		[Authorize(Roles = "Admin")]
+		public IActionResult Delete(Guid id)
         {
             var operation = _context.operations.Find(id);
             if (operation == null)
@@ -124,7 +129,8 @@ namespace HairSaloonScheduler.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+		[Authorize(Roles = "Admin")]
+		[ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Operations operation)
         {
             if (operation == null)

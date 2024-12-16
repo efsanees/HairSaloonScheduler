@@ -1,49 +1,172 @@
 ﻿@model HairSaloonScheduler.Models.Statistics
+
 @{
-    ViewData["Title"] = "Çalışan İstatistikleri";
+	ViewData["Title"] = "Employee Statistics - Admin Panel";
+	Layout = null;
 }
 
-<h2>Çalışan İstatistikleri</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
 
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["ErrorMessage"]
-    </div>
-}
+	<!-- Bootstrap CSS -->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+	<style>
+		body {
+			font-family: 'Poppins', sans-serif;
+			overflow-x: hidden;
+		}
 
-<form method="get" asp-action="GetStatistics" asp-controller="Statistics">
-    <div class="form-group">
-        <label for="employeeId">Çalışan Seçin:</label>
-        <select id="employeeId" name="employeeId" class="form-control" required>
-            @foreach (var employee in ViewData["Employees"] as List<HairSaloonScheduler.Models.Employees>)
-            {
-                <option value="@employee.EmployeeId">@employee.EmployeeName</option>
-            }
-        </select>
-    </div>
+		#sidebar {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 250px;
+			height: 100%;
+			background-color: #ff66b2;
+			color: white;
+			padding-top: 50px;
+		}
 
-    <div class="form-group">
-        <label for="day">Tarih Seçin:</label>
-        <input type="date" id="day" name="day" class="form-control" required />
-    </div>
+			#sidebar .nav-link {
+				color: #f8f9fa;
+				font-size: 18px;
+			}
 
-    <button type="submit" class="btn btn-primary">İstatistikleri Getir</button>
-</form>
+				#sidebar .nav-link:hover {
+					background-color: #e60073;
+					color: white;
+				}
 
-@if (Model != null)
-{
-    <div class="statistics-container mt-5">
-        <h3>@Model.EmployeeId için @Model.Day.ToString("yyyy-MM-dd") Tarihindeki İstatistikler</h3>
+				#sidebar .nav-link.active {
+					font-weight: bold;
+					background-color: #ff3385;
+				}
 
-        <div class="statistic-item">
-            <strong>Çalışma Saati:</strong>
-            <span>@Model.WorkHour saat</span>
-        </div>
+		#content {
+			margin-left: 250px;
+			padding: 20px;
+		}
 
-        <div class="statistic-item">
-            <strong>Toplam Kazanç:</strong>
-            <span>@Model.Gain TL</span>
-        </div>
-    </div>
-}
+		.btn-primary {
+			background-color: #ff66b2;
+			border-color: #ff66b2;
+		}
+
+			.btn-primary:hover {
+				background-color: #e60073;
+				border-color: #e60073;
+			}
+
+		.alert-danger {
+			background-color: #ffcccc;
+			color: #e60073;
+		}
+
+		.statistics-container {
+			background-color: #ffe6f0;
+			padding: 20px;
+			border-radius: 10px;
+		}
+
+		.statistic-item {
+			margin: 10px 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="sidebar">
+		<h4 class="text-center text-white">Admin Panel</h4>
+		<ul class="nav flex-column">
+			<li class="nav-item">
+				<a class="nav-link" asp-controller="Admin" asp-action="AdminPanel">
+					<i class="fas fa-tachometer-alt"></i> Dashboard
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" asp-controller="Saloon" asp-action="Index">
+					<i class="fas fa-users"></i> User Page
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" asp-controller="Employees" asp-action="Create">
+					<i class="fas fa-users"></i> Manage Employees
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" asp-controller="Operations" asp-action="Create">
+					<i class="fas fa-cogs"></i> Manage Operations
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" asp-controller="Appointments" asp-action="Index">
+					<i class="fas fa-calendar-check"></i> View Appointments
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link active" asp-controller="Statistics" asp-action="GetStatistics">
+					<i class="fas fa-chart-line"></i> View Statistics
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<div id="content">
+		<h2>Employee Statistics</h2>
+
+		@if (TempData["ErrorMessage"] != null && !string.IsNullOrWhiteSpace(TempData["ErrorMessage"].ToString()))
+		{
+			<div class="alert alert-danger">
+				@TempData["ErrorMessage"]
+			</div>
+		}
+
+
+		<form method="get" asp-action="GetStatistics" asp-controller="Statistics">
+			<div class="form-group">
+				<label for="employeeId">Select Employee:</label>
+				<select id="employeeId" name="employeeId" class="form-control" required>
+					<option value="" disabled selected>Select an employee</option>
+					@foreach (var employee in ViewData["Employees"] as List<HairSaloonScheduler.Models.Employees>)
+					{
+						<option value="@employee.EmployeeId">@employee.EmployeeName</option>
+					}
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="day">Select Date:</label>
+				<input type="date" id="day" name="day" class="form-control" required />
+			</div>
+
+			<button type="submit" class="btn btn-primary">Get Statistics</button>
+		</form>
+
+		@if (Model != null)
+		{
+			<div class="statistics-container mt-5">
+				<h3>Statistics for Employee: @Model.Employee.EmployeeName on @Model.Day.ToString("yyyy-MM-dd")</h3>
+
+				<div class="statistic-item">
+					<strong>Productivity:</strong>
+					<span>% @Model.Productivity (Work hours/Total Shift Hour)</span>
+				</div>
+
+				<div class="statistic-item">
+					<strong>Total Earnings:</strong>
+					<span>@Model.Gain TL</span>
+				</div>
+			</div>
+		}
+	</div>
+
+	<!-- Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -16,7 +16,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            overflow-x: hidden; /* Yatay kaydırmayı engelle */
+            overflow-x: hidden; 
         }
 
         #sidebar {
@@ -25,9 +25,9 @@
             left: 0;
             width: 250px;
             height: 100%;
-            background-color: #ff66b2; /* Pembe tema */
+            background-color: #ff66b2; 
             color: white;
-            padding-top: 50px; /* Sidebar üst padding */
+            padding-top: 50px; 
         }
 
             #sidebar .nav-link {
@@ -36,13 +36,13 @@
             }
 
                 #sidebar .nav-link:hover {
-                    background-color: #e60073; /* Daha koyu pembe hover rengi */
+                    background-color: #e60073; 
                     color: white;
                 }
 
                 #sidebar .nav-link.active {
                     font-weight: bold;
-                    background-color: #ff3385; /* Aktif link için pembe */
+                    background-color: #ff3385; 
                 }
 
         #content {
@@ -52,7 +52,7 @@
 
         .card {
             border-radius: 8px;
-            background-color: #ffccf2; /* Açık pembe kart arka planı */
+            background-color: #ffccf2;
         }
 
         .card-body {
@@ -60,27 +60,27 @@
         }
 
         .btn-primary {
-            background-color: #ff66b2; /* Pembe buton rengi */
+            background-color: #ff66b2;
             border-color: #ff66b2;
         }
 
             .btn-primary:hover {
-                background-color: #e60073; /* Buton hover efekti */
+                background-color: #e60073;
                 border-color: #e60073;
             }
 
         .btn-danger {
-            background-color: #ff4d94; /* Logout butonu için pembe */
+            background-color: #ff4d94;
             border-color: #ff4d94;
         }
 
             .btn-danger:hover {
-                background-color: #e60073; /* Logout butonunun hover rengi */
+                background-color: #e60073;
                 border-color: #e60073;
             }
 
         h1 {
-            margin-top: 30px; /* Sayfa başlığının üst kısmı ile arayı açma */
+            margin-top: 30px;
         }
 
     </style>
@@ -93,8 +93,13 @@
         <h4 class="text-center text-white">Admin Panel</h4>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link active" asp-controller="Admin" asp-action="AdminPanel">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Saloon" asp-action="Index">
+                    <i class="fas fa-users"></i> User Page
                 </a>
             </li>
             <li class="nav-item">
@@ -152,7 +157,7 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title">View Appointments</h5>
-                            <p class="card-text">See upcoming and past appointments.</p>
+                            <p class="card-text">See upcoming appointments and approve or cancel.</p>
                             <a href="@Url.Action("Index", "Appointments")" class="btn btn-primary">View Appointments</a>
                         </div>
                     </div>
@@ -161,7 +166,7 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title">View Statistics</h5>
-                            <p class="card-text">Analyze employee and salon performance.</p>
+                            <p class="card-text">Analyze employee's performance.</p>
                             <a href="@Url.Action("GetStatistics", "Statistics")" class="btn btn-primary">View Statistics</a>
                         </div>
                     </div>
