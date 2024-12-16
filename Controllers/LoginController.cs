@@ -124,13 +124,20 @@ namespace HairSaloonScheduler.Controllers
 
                 await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return RedirectToAction("Index", "Saloon");
+                return RedirectToAction("AdminPanel", "Admin");
             }
             else
             {
                 ViewBag.Error = "Email veya şifre yanlış.";
                 return View();
             }
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Oturum bilgilerini temizle
+            return RedirectToAction("Login");
         }
 
 

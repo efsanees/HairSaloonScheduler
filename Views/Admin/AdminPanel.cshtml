@@ -1,0 +1,182 @@
+﻿@{
+    ViewData["Title"] = "Admin Panel";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden; /* Yatay kaydırmayı engelle */
+        }
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #ff66b2; /* Pembe tema */
+            color: white;
+            padding-top: 50px; /* Sidebar üst padding */
+        }
+
+            #sidebar .nav-link {
+                color: #f8f9fa;
+                font-size: 18px;
+            }
+
+                #sidebar .nav-link:hover {
+                    background-color: #e60073; /* Daha koyu pembe hover rengi */
+                    color: white;
+                }
+
+                #sidebar .nav-link.active {
+                    font-weight: bold;
+                    background-color: #ff3385; /* Aktif link için pembe */
+                }
+
+        #content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .card {
+            border-radius: 8px;
+            background-color: #ffccf2; /* Açık pembe kart arka planı */
+        }
+
+        .card-body {
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #ff66b2; /* Pembe buton rengi */
+            border-color: #ff66b2;
+        }
+
+            .btn-primary:hover {
+                background-color: #e60073; /* Buton hover efekti */
+                border-color: #e60073;
+            }
+
+        .btn-danger {
+            background-color: #ff4d94; /* Logout butonu için pembe */
+            border-color: #ff4d94;
+        }
+
+            .btn-danger:hover {
+                background-color: #e60073; /* Logout butonunun hover rengi */
+                border-color: #e60073;
+            }
+
+        h1 {
+            margin-top: 30px; /* Sayfa başlığının üst kısmı ile arayı açma */
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <h4 class="text-center text-white">Admin Panel</h4>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Employees" asp-action="Index">
+                    <i class="fas fa-users"></i> Manage Employees
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Operations" asp-action="Index">
+                    <i class="fas fa-cogs"></i> Manage Operations
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Appointments" asp-action="Index">
+                    <i class="fas fa-calendar-check"></i> View Appointments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Statistics" asp-action="GetStatistics">
+                    <i class="fas fa-chart-line"></i> View Statistics
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <div class="container">
+            <h1>Welcome to Admin Panel</h1>
+            <p>Manage the system from here.</p>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Manage Employees</h5>
+                            <p class="card-text">Add, update or remove employees.</p>
+                            <a href="@Url.Action("Index", "Employees")" class="btn btn-primary">Go to Employee Management</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Manage Operations</h5>
+                            <p class="card-text">Add, update or remove salon operations.</p>
+                            <a href="@Url.Action("Index", "Operations")" class="btn btn-primary">Go to Operations Management</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">View Appointments</h5>
+                            <p class="card-text">See upcoming and past appointments.</p>
+                            <a href="@Url.Action("Index", "Appointments")" class="btn btn-primary">View Appointments</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">View Statistics</h5>
+                            <p class="card-text">Analyze employee and salon performance.</p>
+                            <a href="@Url.Action("GetStatistics", "Statistics")" class="btn btn-primary">View Statistics</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a asp-action="Logout" asp-controller="Login" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

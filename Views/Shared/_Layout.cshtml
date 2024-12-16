@@ -24,38 +24,43 @@
 </head>
 <body>
     <header class="site-navbar py-1" role="banner">
-
         <div class="container-fluid">
             <div class="row align-items-center">
-
                 <div class="col-6 col-xl-2" data-aos="fade-down">
-                    <h1 class="mb-0"><a asp-controller="Saloon" asp-action="Index" class="text-black h2 mb-0">Hairsal</a></h1>
+                    <h1 class="mb-0">
+                        <a asp-controller="Saloon" asp-action="Index" class="text-black h2 mb-0">Hairsal</a>
+                    </h1>
                 </div>
                 <div class="col-10 col-md-8 d-none d-xl-block" data-aos="fade-down">
                     <nav class="site-navigation position-relative text-right text-lg-center" role="navigation">
-
                         <ul class="site-menu js-clone-nav mx-auto d-none d-lg-block">
                             <li>
-                                <a asp-controller="Employees" asp-action="Index">Employees</a>
+                                <a asp-controller="Employees" asp-action="Index">Our Employees</a>
                             </li>
                             <li>
-                                <a asp-controller="Operations" asp-action="Index">Operations</a>
+                                <a asp-controller="Operations" asp-action="Index">Our Operations</a>
                             </li>
-							<li><a asp-controller="Appointments" asp-action="Create">Book Appointment</a></li>
-							<li>
-								<a asp-controller="Statistics" asp-action="GetStatistics">To Employee Statistics</a>
-							</li>
-                            <li class="d-inline-block">
-                                <a asp-controller="Login" asp-action="Login" class="btn btn-primary">Login</a>
+                            <li>
+                                <a asp-controller="Appointments" asp-action="Create">Book Appointment</a>
                             </li>
-                            <li class="d-inline-block">
-                                <a asp-controller="Login" asp-action="SignUp" class="btn btn-primary">Sign Up</a>
-                            </li>
-                            
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <li class="d-inline-block">
+                                    <a asp-controller="Login" asp-action="Login" class="btn btn-primary">Login</a>
+                                </li>
+                                <li class="d-inline-block">
+                                    <a asp-controller="Login" asp-action="SignUp" class="btn btn-primary">Sign Up</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="d-inline-block">
+                                    <a asp-controller="Login" asp-action="Logout" class="btn btn-danger">Logout</a>
+                                </li>
+                            }
                         </ul>
                     </nav>
                 </div>
-
                 <div class="col-6 col-xl-2 text-right" data-aos="fade-down">
                     <div class="d-none d-xl-inline-block">
                         <ul class="site-menu js-clone-nav ml-auto list-unstyled d-flex text-right mb-0" data-class="social">
@@ -73,15 +78,14 @@
                             </li>
                         </ul>
                     </div>
-
-                    <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#" class="site-menu-toggle js-menu-toggle text-black"><span class="icon-menu h3"></span></a></div>
-
+                    <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;">
+                        <a href="#" class="site-menu-toggle js-menu-toggle text-black"><span class="icon-menu h3"></span></a>
+                    </div>
                 </div>
-
             </div>
         </div>
-
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

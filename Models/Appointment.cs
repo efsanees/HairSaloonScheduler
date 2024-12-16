@@ -12,7 +12,7 @@ namespace HairSaloonScheduler.Models
 
         [Required]
         [StringLength(50)]
-        public string Status { get; set; } = (AppointmentStatus.Waiting).ToString();
+        public string Status { get; set; }=AppointmentStatus.Waiting.ToString();
 
         [Required]
         public Guid OperationId { get; set; }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSaloonScheduler.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20241213225209_ü")]
-    partial class ü
+    [Migration("20241216000803_back")]
+    partial class back
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -97,6 +97,8 @@ namespace HairSaloonScheduler.Migrations
 
                     b.HasKey("AvailabilityId");
 
+                    b.HasIndex("EmployeeId");
+
                     b.ToTable("availabilities");
                 });
 
@@ -151,6 +153,29 @@ namespace HairSaloonScheduler.Migrations
                     b.HasKey("OperationId");
 
                     b.ToTable("operations");
+                });
+
+            modelBuilder.Entity("HairSaloonScheduler.Models.Statistics", b =>
+                {
+                    b.Property<Guid>("StatisticId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Day")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Gain")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("WorkHour")
+                        .HasColumnType("float");
+
+                    b.HasKey("StatisticId");
+
+                    b.ToTable("statistics");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.User", b =>
@@ -210,6 +235,17 @@ namespace HairSaloonScheduler.Migrations
                     b.Navigation("Operation");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HairSaloonScheduler.Models.Availability", b =>
+                {
+                    b.HasOne("HairSaloonScheduler.Models.Employees", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>

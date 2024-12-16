@@ -45,7 +45,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
 
-// Ensure that UseAuthentication() and UseAuthorization() are correctly placed
 app.UseAuthentication();
 app.UseAuthorization();
 
