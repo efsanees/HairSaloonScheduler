@@ -4,7 +4,22 @@
     ViewData["Title"] = "My Appointments";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <h2>My Appointments</h2>
+
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -18,14 +33,15 @@
     <tbody>
         @foreach (var appointment in Model)
         {
-                <tr>
-                    <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
-                    <td>@appointment.Status</td>
-                    <td>@appointment.Operation.OperationName</td>
-                    <td>@appointment.Employee.EmployeeName</td>
-                    <td>@appointment.Operation.Price.ToString("C")</td>
-                </tr>
+            <tr>
+                <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@appointment.Status</td>
+                <td>@appointment.Operation.OperationName</td>
+                <td>@appointment.Employee.EmployeeName</td>
+                <td>@appointment.Operation.Price.ToString("C")</td>
+            </tr>
         }
     </tbody>
 </table>
+
 <a asp-action="Create" class="btn btn-primary">Book New Appointment</a>

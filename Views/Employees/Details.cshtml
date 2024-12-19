@@ -4,8 +4,11 @@
     ViewData["Title"] = "Employee Details - Admin Panel";
     Layout = null;
 }
-
 <!DOCTYPE html>
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
 <html lang="en">
 <head>
     <meta charset="utf-8" />

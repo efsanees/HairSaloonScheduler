@@ -102,6 +102,19 @@
     <div id="content">
         <div class="container">
             <h1>Appointments</h1>
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
             <table class="table">
                 <thead>
                     <tr>
