@@ -60,6 +60,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.WorkEnd)
                 </th>
+                <th>
+                    Abilities
+                </th>
                 <th></th>
             </tr>
         </thead>
@@ -80,6 +83,21 @@
                         @Html.DisplayFor(modelItem => item.WorkEnd)
                     </td>
                     <td>
+                        @if (item.Abilities != null && item.Abilities.Any())
+                        {
+                            <ul>
+                                @foreach (var ability in item.Abilities)
+                                {
+                                    <li>@ability.OperationName</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No abilities assigned</span>
+                        }
+                    </td>
+                    <td>
                         @if (User.IsInRole("Admin"))
                         {
                             <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a>
@@ -91,6 +109,7 @@
             }
         </tbody>
     </table>
+
 
 
 

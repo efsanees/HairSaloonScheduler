@@ -28,7 +28,7 @@ namespace HairSaloonScheduler.Controllers
 				return RedirectToAction("Error");
 			}
 
-			var employees = await _context.employees.Include(e => e.ExpertiseArea).ToListAsync();
+			var employees = await _context.employees.Include(e => e.ExpertiseArea).Include(e => e.Abilities).ToListAsync();
 			if (employees == null || !employees.Any())
 			{
 				ViewBag.Message = "No employees found.";
@@ -69,17 +69,29 @@ namespace HairSaloonScheduler.Controllers
 			}
 
 			ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName");
+			ViewData["Abilities"] = _context.operations
+			.Select(o => new SelectListItem
+			{
+				Value = o.OperationId.ToString(), 
+				Text = o.OperationName           
+			}).ToList();
 			return View();
 		}
 
 		[HttpPost]
 		[Authorize(Roles = "Admin")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("EmployeeName,ExpertiseAreaId,WorkStart,WorkEnd")] Employees employees)
+		public async Task<IActionResult> Create([Bind("EmployeeName,ExpertiseAreaId,WorkStart,WorkEnd")] Employees employees,IEnumerable<Guid> selectedAbilities)
 		{
-			if (!ModelState.IsValid)
+			if (ModelState.IsValid)
 			{
-				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId);
+				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.Abilities).ToList();
+				ViewData["Abilities"] = _context.operations
+				.Select(o => new SelectListItem
+				{
+					Value = o.OperationId.ToString(),
+					Text = o.OperationName
+				}).ToList();
 				return View(employees);
 			}
 
@@ -96,6 +108,16 @@ namespace HairSaloonScheduler.Controllers
 					.FirstOrDefaultAsync(o => o.OperationId == employees.ExpertiseAreaId);
 			}
 
+			employees.Abilities = new List<Operations>();
+			foreach (var abilityId in selectedAbilities)
+			{
+				var operation = await _context.operations.FindAsync(abilityId);
+				if (operation != null)
+				{
+					employees.Abilities.Add(operation);
+				}
+			}
+
 			try
 			{
 				_context.Add(employees);
@@ -106,6 +128,12 @@ namespace HairSaloonScheduler.Controllers
 			{
 				TempData["Error"] = $"An error occurred: {ex.Message}";
 				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId);
+				ViewData["Abilities"] = _context.operations
+				.Select(o => new SelectListItem
+				{
+					Value = o.OperationId.ToString(),
+					Text = o.OperationName
+				}).ToList();
 				return View(employees);
 			}
 		}

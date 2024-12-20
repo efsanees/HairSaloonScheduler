@@ -100,6 +100,27 @@ namespace HairSaloonScheduler.Migrations
                     b.ToTable("availabilities");
                 });
 
+            modelBuilder.Entity("HairSaloonScheduler.Models.EmployeeOperation", b =>
+                {
+                    b.Property<Guid>("EmployeeOperationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("EmployeeOperationId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("OperationId");
+
+                    b.ToTable("employeeOperations");
+                });
+
             modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>
                 {
                     b.Property<Guid>("EmployeeId")
@@ -167,6 +188,9 @@ namespace HairSaloonScheduler.Migrations
 
                     b.Property<decimal>("Gain")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("Productivity")
+                        .HasColumnType("float");
 
                     b.Property<double>("WorkHour")
                         .HasColumnType("float");
@@ -248,6 +272,25 @@ namespace HairSaloonScheduler.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("HairSaloonScheduler.Models.EmployeeOperation", b =>
+                {
+                    b.HasOne("HairSaloonScheduler.Models.Employees", "Employee")
+                        .WithMany("EmployeeOperations")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HairSaloonScheduler.Models.Operations", "Operation")
+                        .WithMany("EmployeeOperations")
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Operation");
+                });
+
             modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>
                 {
                     b.HasOne("HairSaloonScheduler.Models.Operations", "ExpertiseArea")
@@ -268,6 +311,16 @@ namespace HairSaloonScheduler.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>
+                {
+                    b.Navigation("EmployeeOperations");
+                });
+
+            modelBuilder.Entity("HairSaloonScheduler.Models.Operations", b =>
+                {
+                    b.Navigation("EmployeeOperations");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.User", b =>
