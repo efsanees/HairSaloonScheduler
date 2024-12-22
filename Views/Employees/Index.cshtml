@@ -67,46 +67,49 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EmployeeName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ExpertiseArea.OperationName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.WorkStart)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.WorkEnd)
-                    </td>
-                    <td>
-                        @if (item.Abilities != null && item.Abilities.Any())
-                        {
-                            <ul>
-                                @foreach (var ability in item.Abilities)
-                                {
-                                    <li>@ability.OperationName</li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span>No abilities assigned</span>
-                        }
-                    </td>
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a>
-                            <a asp-action="Details" asp-route-id="@item.EmployeeId">Details</a>
-                            <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
-                        }
-                    </td>
-                </tr>
+            @if(Model!=null){
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EmployeeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ExpertiseArea.OperationName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WorkStart)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WorkEnd)
+                        </td>
+                        <td>
+                            @if (item.EmployeeAbilities != null && item.EmployeeAbilities.Any())
+                            {
+                                <ul>
+                                    @foreach (var ability in item.EmployeeAbilities)
+                                    {
+                                        <li>@ability.Operation.OperationName</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span>No abilities assigned</span>
+                            }
+                        </td>
+                        <td>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.EmployeeId">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
+                            }
+                        </td>
+                    </tr>
+                }
             }
+            
         </tbody>
     </table>
 

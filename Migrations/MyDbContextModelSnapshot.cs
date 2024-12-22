@@ -22,6 +22,21 @@ namespace HairSaloonScheduler.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("EmployeeAbilities", b =>
+                {
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("OperationId", "EmployeeId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeAbilities");
+                });
+
             modelBuilder.Entity("HairSaloonScheduler.Models.Admin", b =>
                 {
                     b.Property<Guid>("AdminId")
@@ -64,6 +79,9 @@ namespace HairSaloonScheduler.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("AppointmentId");
 
                     b.HasIndex("EmployeeId");
@@ -71,6 +89,8 @@ namespace HairSaloonScheduler.Migrations
                     b.HasIndex("OperationId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("appointments");
                 });
@@ -100,9 +120,9 @@ namespace HairSaloonScheduler.Migrations
                     b.ToTable("availabilities");
                 });
 
-            modelBuilder.Entity("HairSaloonScheduler.Models.EmployeeOperation", b =>
+            modelBuilder.Entity("HairSaloonScheduler.Models.EmployeeAbilities", b =>
                 {
-                    b.Property<Guid>("EmployeeOperationId")
+                    b.Property<Guid>("PK")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -112,13 +132,13 @@ namespace HairSaloonScheduler.Migrations
                     b.Property<Guid>("OperationId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("EmployeeOperationId");
+                    b.HasKey("PK");
 
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("employeeOperations");
+                    b.ToTable("employeeAbilities");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>
@@ -234,6 +254,21 @@ namespace HairSaloonScheduler.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("EmployeeAbilities", b =>
+                {
+                    b.HasOne("HairSaloonScheduler.Models.Employees", null)
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HairSaloonScheduler.Models.Operations", null)
+                        .WithMany()
+                        .HasForeignKey("OperationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HairSaloonScheduler.Models.Appointment", b =>
                 {
                     b.HasOne("HairSaloonScheduler.Models.Employees", "Employee")
@@ -245,14 +280,18 @@ namespace HairSaloonScheduler.Migrations
                     b.HasOne("HairSaloonScheduler.Models.Operations", "Operation")
                         .WithMany()
                         .HasForeignKey("OperationId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HairSaloonScheduler.Models.User", "User")
-                        .WithMany("Appointments")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("HairSaloonScheduler.Models.User", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Employee");
 
@@ -272,18 +311,18 @@ namespace HairSaloonScheduler.Migrations
                     b.Navigation("Employee");
                 });
 
-            modelBuilder.Entity("HairSaloonScheduler.Models.EmployeeOperation", b =>
+            modelBuilder.Entity("HairSaloonScheduler.Models.EmployeeAbilities", b =>
                 {
                     b.HasOne("HairSaloonScheduler.Models.Employees", "Employee")
-                        .WithMany("EmployeeOperations")
+                        .WithMany("EmployeeAbilities")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("HairSaloonScheduler.Models.Operations", "Operation")
-                        .WithMany("EmployeeOperations")
+                        .WithMany("EmployeeAbilities")
                         .HasForeignKey("OperationId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Employee");
@@ -315,12 +354,12 @@ namespace HairSaloonScheduler.Migrations
 
             modelBuilder.Entity("HairSaloonScheduler.Models.Employees", b =>
                 {
-                    b.Navigation("EmployeeOperations");
+                    b.Navigation("EmployeeAbilities");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.Operations", b =>
                 {
-                    b.Navigation("EmployeeOperations");
+                    b.Navigation("EmployeeAbilities");
                 });
 
             modelBuilder.Entity("HairSaloonScheduler.Models.User", b =>

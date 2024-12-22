@@ -10,6 +10,8 @@ namespace HairSaloonScheduler.Models
 		public string OperationName { get; set; }
 		public TimeSpan Duration { get; set; }
         public decimal Price { get; set; }
+		public ICollection<Employees>? Employees { get; set; }
+		public ICollection<EmployeeAbilities> EmployeeAbilities { get; set; }
 	}
 }
 	

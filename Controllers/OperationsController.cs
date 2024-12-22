@@ -30,7 +30,7 @@ namespace HairSaloonScheduler.Controllers
             if (operations == null || !operations.Any())
             {
                 ViewBag.Message = "No operations found.";
-                return View("Empty");
+                return View();
             }
 
             return View(operations);
@@ -65,7 +65,7 @@ namespace HairSaloonScheduler.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OperationId,OperationName,Price")] Operations operations, int durationMinutes)
         {
-            if (!ModelState.IsValid)
+            if (operations==null)
             {
                 return View(operations);
             }
@@ -118,7 +118,7 @@ namespace HairSaloonScheduler.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Operations operations)
         {
-            if (!ModelState.IsValid)
+            if (operations==null)
             {
                 return View(operations);
             }
@@ -178,9 +178,9 @@ namespace HairSaloonScheduler.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Operations deleteOperation)
         {
-            var operation = await _context.operations.FindAsync(id);
+            var operation = await _context.operations.FindAsync(deleteOperation.OperationId);
             if (operation == null)
             {
                 TempData["Error"] = "Operation not found.";

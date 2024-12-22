@@ -61,7 +61,7 @@ namespace HairSaloonScheduler.Controllers
             if (!appointments.Any())
             {
                 TempData["ErrorMessage"] = "No Appointments.";
-                return RedirectToAction("Index");
+                return View();
             }
 
             return View(appointments);
@@ -72,7 +72,7 @@ namespace HairSaloonScheduler.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AppointmentDate,OperationId,EmployeeId")] Appointment appointment)
         {
-            if (!ModelState.IsValid)
+            if (appointment==null)
             {
                 ViewData["EmployeeId"] = new SelectList(_context.employees, "EmployeeId", "EmployeeName", appointment.EmployeeId);
                 ViewData["OperationId"] = new SelectList(_context.operations, "OperationId", "OperationName", appointment.OperationId);

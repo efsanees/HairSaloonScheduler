@@ -28,11 +28,11 @@ namespace HairSaloonScheduler.Controllers
 				return RedirectToAction("Error");
 			}
 
-			var employees = await _context.employees.Include(e => e.ExpertiseArea).Include(e => e.Abilities).ToListAsync();
+			var employees = await _context.employees.Include(e => e.ExpertiseArea).Include(e => e.EmployeeAbilities).ThenInclude(ea => ea.Operation).ToListAsync();
 			if (employees == null || !employees.Any())
 			{
 				ViewBag.Message = "No employees found.";
-				return View("Empty");
+				return View();
 			}
 
 			return View(employees);
@@ -48,6 +48,8 @@ namespace HairSaloonScheduler.Controllers
 
 			var employees = await _context.employees
 				.Include(e => e.ExpertiseArea)
+				.Include(e => e.EmployeeAbilities)
+				.ThenInclude(ea => ea.Operation)
 				.FirstOrDefaultAsync(m => m.EmployeeId == id);
 
 			if (employees == null)
@@ -69,12 +71,14 @@ namespace HairSaloonScheduler.Controllers
 			}
 
 			ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName");
-			ViewData["Abilities"] = _context.operations
+			ViewData["EmployeeAbilities"] = _context.operations
 			.Select(o => new SelectListItem
 			{
-				Value = o.OperationId.ToString(), 
-				Text = o.OperationName           
-			}).ToList();
+				Value = o.OperationId.ToString(),
+				Text = o.OperationName
+			})
+			.ToList();
+
 			return View();
 		}
 
@@ -83,20 +87,16 @@ namespace HairSaloonScheduler.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([Bind("EmployeeName,ExpertiseAreaId,WorkStart,WorkEnd")] Employees employees,IEnumerable<Guid> selectedAbilities)
 		{
-			if (ModelState.IsValid)
+			if (employees==null)
 			{
-				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.Abilities).ToList();
-				ViewData["Abilities"] = _context.operations
+				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId).ToList();
+				ViewData["EmployeeAbilities"] = _context.operations
 				.Select(o => new SelectListItem
 				{
 					Value = o.OperationId.ToString(),
 					Text = o.OperationName
-				}).ToList();
-				return View(employees);
-			}
-
-			if (employees == null)
-			{
+				})
+				.ToList();
 				TempData["Error"] = "Invalid employee data.";
 				return RedirectToAction(nameof(Index));
 			}
@@ -108,15 +108,22 @@ namespace HairSaloonScheduler.Controllers
 					.FirstOrDefaultAsync(o => o.OperationId == employees.ExpertiseAreaId);
 			}
 
-			employees.Abilities = new List<Operations>();
+			employees.EmployeeAbilities = new List<EmployeeAbilities>();
 			foreach (var abilityId in selectedAbilities)
 			{
 				var operation = await _context.operations.FindAsync(abilityId);
 				if (operation != null)
 				{
-					employees.Abilities.Add(operation);
+					employees.EmployeeAbilities.Add(new EmployeeAbilities
+					{
+						EmployeeId = employees.EmployeeId,
+						OperationId = operation.OperationId,
+						Employee = employees,
+						Operation = operation
+					});
 				}
 			}
+
 
 			try
 			{
@@ -128,12 +135,13 @@ namespace HairSaloonScheduler.Controllers
 			{
 				TempData["Error"] = $"An error occurred: {ex.Message}";
 				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId);
-				ViewData["Abilities"] = _context.operations
+				ViewData["EmployeeAbilities"] = _context.operations
 				.Select(o => new SelectListItem
 				{
 					Value = o.OperationId.ToString(),
 					Text = o.OperationName
-				}).ToList();
+				})
+				.ToList();
 				return View(employees);
 			}
 		}
@@ -148,7 +156,12 @@ namespace HairSaloonScheduler.Controllers
 				return RedirectToAction(nameof(Index));
 			}
 
-			var employees = await _context.employees.FindAsync(id);
+			var employees = await _context.employees
+				.Include(e=> e.ExpertiseArea)
+			   .Include(e => e.EmployeeAbilities)
+			   .ThenInclude(ea => ea.Operation)
+			   .FirstOrDefaultAsync(e => e.EmployeeId == id);
+
 			if (employees == null)
 			{
 				TempData["Error"] = "Employee not found.";
@@ -156,57 +169,75 @@ namespace HairSaloonScheduler.Controllers
 			}
 
 			ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId);
-			return View(employees);
+
+            ViewData["EmployeeAbilities"] = _context.operations
+                .Select(o => new SelectListItem
+                {
+                    Value = o.OperationId.ToString(),
+                    Text = o.OperationName,
+                    Selected = _context.employeeAbilities.Any(ea => ea.OperationId == o.OperationId)
+                })
+                .ToList();
+
+            return View(employees);
 		}
 
 		[HttpPost]
 		[Authorize(Roles = "Admin")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(Employees employees)
-		{
-			if (!ModelState.IsValid)
+		public async Task<IActionResult> Edit([Bind("EmployeeId,EmployeeName,ExpertiseAreaId,WorkStart,WorkEnd")] Employees employees, IEnumerable<Guid> selectedAbilities)
+        {
+
+            if (employees==null)
+            {
+                ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId);
+                ViewData["EmployeeAbilities"] = _context.operations
+                .Select(o => new SelectListItem
+                {
+                    Value = o.OperationId.ToString(),
+                    Text = o.OperationName,
+                    Selected = _context.employeeAbilities.Any(ea => ea.OperationId == o.OperationId)
+                })
+                .ToList();
+                return View(employees);
+            }
+
+			var existingEmployee = await _context.employees
+			.Include(o => o.ExpertiseArea)
+			.Include(e => e.EmployeeAbilities)
+			.ThenInclude(ea => ea.Operation)
+			.FirstOrDefaultAsync(e => e.EmployeeId == employees.EmployeeId);
+
+			if (existingEmployee == null)
+            {
+                TempData["Error"] = "Employee not found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            existingEmployee.EmployeeName = employees.EmployeeName;
+            existingEmployee.ExpertiseAreaId = employees.ExpertiseAreaId;
+            existingEmployee.WorkStart = employees.WorkStart;
+            existingEmployee.WorkEnd = employees.WorkEnd;
+
+            _context.employeeAbilities.RemoveRange(existingEmployee.EmployeeAbilities);
+            foreach (var abilityId in selectedAbilities)
 			{
-				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId);
-				return View(employees);
+				var operation = await _context.operations.FindAsync(abilityId);
+				if (operation != null)
+				{
+					existingEmployee.EmployeeAbilities.Add(new EmployeeAbilities
+					{
+						EmployeeId = existingEmployee.EmployeeId,
+						OperationId = operation.OperationId,
+						Employee = existingEmployee,
+						Operation = operation
+					});
+				}
 			}
 
-			if (employees == null)
-			{
-				TempData["Error"] = "Invalid employee data.";
-				return RedirectToAction(nameof(Index));
-			}
-
-			try
-			{
-				_context.Update(employees);
-				if (employees.ExpertiseAreaId != null)
-				{
-					employees.ExpertiseArea = await _context.operations
-						.FirstOrDefaultAsync(o => o.OperationId == employees.ExpertiseAreaId);
-				}
-
-				await _context.SaveChangesAsync();
-				return RedirectToAction(nameof(Index));
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!EmployeesExists(employees.EmployeeId))
-				{
-					TempData["Error"] = "Employee does not exist.";
-					return RedirectToAction(nameof(Index));
-				}
-				else
-				{
-					throw;
-				}
-			}
-			catch (Exception ex)
-			{
-				TempData["Error"] = $"An error occurred: {ex.Message}";
-				ViewData["ExpertiseArea"] = new SelectList(_context.operations, "OperationId", "OperationName", employees.ExpertiseAreaId);
-				return View(employees);
-			}
-		}
+			await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
 		[Authorize(Roles = "Admin")]
 		[HttpGet]
@@ -233,7 +264,7 @@ namespace HairSaloonScheduler.Controllers
 		[HttpPost, ActionName("Delete")]
 		[Authorize(Roles = "Admin")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(Guid id)
+		public async Task<IActionResult> DeleteConfirmed(Employees employees)
 		{
 			if (_context.employees == null)
 			{
@@ -241,7 +272,7 @@ namespace HairSaloonScheduler.Controllers
 				return RedirectToAction(nameof(Index));
 			}
 
-			var employee = await _context.employees.FindAsync(id);
+			var employee = await _context.employees.FindAsync(employees.EmployeeId);
 			if (employee == null)
 			{
 				TempData["Error"] = "Employee not found.";

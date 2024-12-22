@@ -31,16 +31,20 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var appointment in Model)
+        @if (Model != null)
         {
+            @foreach (var appointment in Model)
+            {
             <tr>
-                <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
-                <td>@appointment.Status</td>
-                <td>@appointment.Operation.OperationName</td>
-                <td>@appointment.Employee.EmployeeName</td>
-                <td>@appointment.Operation.Price.ToString("C")</td>
-            </tr>
+                        <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@appointment.Status</td>
+                        <td>@appointment.Operation.OperationName</td>
+                        <td>@appointment.Employee.EmployeeName</td>
+                        <td>@appointment.Operation.Price.ToString("C")</td>
+                    </tr>
+            }
         }
+        
     </tbody>
 </table>
 
