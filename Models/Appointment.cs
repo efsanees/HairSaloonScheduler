@@ -16,15 +16,15 @@ namespace HairSaloonScheduler.Models
 
         [Required]
         public Guid OperationId { get; set; }
-        public Operations Operation { get; set; }
+        public Operations? Operation { get; set; }
 
         [Required]
         public Guid EmployeeId { get; set; }
-        public Employees Employee { get; set; }
+        public Employees? Employee { get; set; }
 
         [Required]
         public Guid UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 
     public enum AppointmentStatus

@@ -25,7 +25,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddHttpClient<DeepAIService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options =>
 {

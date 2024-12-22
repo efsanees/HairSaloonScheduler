@@ -115,8 +115,6 @@ namespace HairSaloonScheduler.Controllers
                         return RedirectToAction("Create");
                     }
 
-                    appointment.Operation = await _context.operations.FirstOrDefaultAsync(o => o.OperationId == appointment.OperationId);
-                    appointment.Employee = await _context.employees.FirstOrDefaultAsync(o => o.EmployeeId == appointment.EmployeeId);
                     var availability = new Availability
                     {
                         AvailabilityId = Guid.NewGuid(),
@@ -125,8 +123,8 @@ namespace HairSaloonScheduler.Controllers
                         StartTime = appointment.AppointmentDate.TimeOfDay,
                         EndTime = appointment.AppointmentDate.Add(appointment.Operation.Duration).TimeOfDay
                     };
-                    _context.Add(availability);
                     availability.Employee = _context.employees.FirstOrDefault(x => x.EmployeeId == availability.EmployeeId);
+                    _context.Add(availability);
                     _context.Add(appointment);
                     await _context.SaveChangesAsync();
 

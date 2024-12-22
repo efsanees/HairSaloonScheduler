@@ -26,6 +26,6 @@ namespace HairSaloonScheduler.Models
         [Required]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
-        public List<Appointment>? Appointments { get; set; }
+        public ICollection<Appointment>? Appointments { get; set; }
 	}
 }

@@ -79,9 +79,6 @@ namespace HairSaloonScheduler.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("AppointmentId");
 
                     b.HasIndex("EmployeeId");
@@ -89,8 +86,6 @@ namespace HairSaloonScheduler.Migrations
                     b.HasIndex("OperationId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("appointments");
                 });
@@ -284,14 +279,10 @@ namespace HairSaloonScheduler.Migrations
                         .IsRequired();
 
                     b.HasOne("HairSaloonScheduler.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Appointments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("HairSaloonScheduler.Models.User", null)
-                        .WithMany("Appointments")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("Employee");
 
