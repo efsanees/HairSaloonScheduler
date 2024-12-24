@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<title>HairSal &mdash; Colorlib Website Template</title>
@@ -116,31 +117,38 @@
 			</div>
 		</div>
 
+		<form method="post" action="/Saloon/ProcessImage" enctype="multipart/form-data">
+			<label for="photo">Select Photo:</label>
+			<input type="file" name="photo" id="photo" accept="image/jpeg, image/jpg, image/png, image/bmp" required />
 
-		<div class="col-md-6 col-lg-4 text-center mb-5 mb-lg-5">
-			<h3 class="text-black h4">Upload Your Photo for AI Styling</h3>
+			<label for="image_target">Select Image Target:</label>
+			<input type="file" name="image_target" id="image_target" accept="image/jpeg, image/jpg, image/png, image/bmp" required />
 
-			<!-- Tag helpers ile form -->
-			<form id="imageUploadForm" enctype="multipart/form-data" method="post" asp-action="GenerateImage" asp-controller="Saloon">
-				<input type="file" name="file" accept="image/*" required />
-				<button type="submit" class="btn btn-primary">Submit</button>
-			</form>
+			<label for="hair_type">Select Hairstyle Type:</label>
+			<select name="hair_type" id="hair_type">
+				<option value="101">Bangs</option>
+				<option value="201">Long hair</option>
+				<option value="301">Bangs with long hair</option>
+				<!-- Diğer saç stilleri burada listelenebilir -->
+			</select>
 
-			<!-- Sonuç kısmı -->
-			<div id="resultImage" style="margin-top: 20px;">
-				@if (ViewBag.ImageUrl != null)
-				{
-					<h4>AI Styled Image:</h4>
-					<img src="@ViewBag.ImageUrl" alt="Generated Image" style="max-width: 100%; height: auto;" />
-				}
-				@if (ViewBag.Error != null)
-				{
-					<div class="alert alert-danger" style="margin-top: 20px;">
-						<strong>Error:</strong> @ViewBag.Error
-					</div>
-				}
-			</div>
-		</div>
+			<button type="submit">Submit</button>
+		</form>
+
+		@if (!string.IsNullOrEmpty(Model.OriginalImage))
+{
+    <h3>Original Image</h3>
+    <img src="data:image/jpeg;base64,@Model.OriginalImage" alt="Original Image" />
+}
+
+<!-- İşlenmiş Görsel -->
+@if (!string.IsNullOrEmpty(Model.ProcessedImage))
+{
+    <h3>Processed Image</h3>
+    <img src="data:image/jpeg;base64,@Model.ProcessedImage" alt="Processed Image" />
+}
+
+
 
 
 

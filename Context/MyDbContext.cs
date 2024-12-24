@@ -89,13 +89,7 @@ namespace HairSaloonScheduler.Context
             .WithMany(u => u.Appointments)
             .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<User>()
-            .HasMany(u => u.Appointments)
-            .WithOne(a => a.User)
-            .HasForeignKey(a => a.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-        }
+		}
 
         public DbSet<Appointment> appointments { get; set; }
         public DbSet<Employees> employees { get; set; }
