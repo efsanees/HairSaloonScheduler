@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Context\" />
+    <Folder Include="wwwroot\Photos\" />
   </ItemGroup>
 
 </Project>

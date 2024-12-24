@@ -12,6 +12,8 @@ using System;
 using HairSaloonScheduler.Helpers;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Threading.Tasks.Sources;
+using Microsoft.VisualStudio.Debugger.Contracts.HotReload;
 
 namespace HairSaloonScheduler.Controllers
 {
@@ -20,37 +22,34 @@ namespace HairSaloonScheduler.Controllers
 		[HttpGet]
 		public IActionResult Index()
 		{
-			return View(new ImageViewModel());
+			return View();
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> ProcessImage(IFormFile photo, IFormFile image_target, int hairType = 101)
+		public async Task<IActionResult> ProcessImage([Bind("image_target,hairType")] AIPhoto aiPhoto)
 		{
-			// 1. Dosya formatı ve boyutunu kontrol et (5 MB'den büyük olmamalı, JPEG, PNG, BMP formatları)
-			var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".bmp" };
-			var photoExtension = Path.GetExtension(photo.FileName).ToLower();
-			var targetExtension = Path.GetExtension(image_target.FileName).ToLower();
+            // 1. Dosya formatı ve boyutunu kontrol et (5 MB'den büyük olmamalı, JPEG, PNG, BMP formatları)
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".bmp" };
+			var targetExtension = Path.GetExtension(aiPhoto.image_target.FileName).ToLower();
 
-			if (!allowedExtensions.Contains(photoExtension) || !allowedExtensions.Contains(targetExtension))
+			if (!allowedExtensions.Contains(targetExtension))
 			{
 				ModelState.AddModelError(string.Empty, "Invalid file format. Only JPEG, JPG, PNG, and BMP are allowed.");
 				return View("Index");
 			}
 
-			if (photo.Length > 5 * 1024 * 1024 || image_target.Length > 5 * 1024 * 1024)
+			if (aiPhoto.image_target.Length > 5 * 1024 * 1024)
 			{
 				ModelState.AddModelError(string.Empty, "File size must not exceed 5 MB.");
 				return View("Index");
 			}
 
 			// 2. Çözünürlük kontrolü
-			using (var photoStream = photo.OpenReadStream())
-			using (var targetStream = image_target.OpenReadStream())
+			using (var targetStream = aiPhoto.image_target.OpenReadStream())
 			{
-				var photoImage = Image.Load(photoStream);
 				var targetImage = Image.Load(targetStream);
 
-				if (photoImage.Width > 4096 || photoImage.Height > 4096 || targetImage.Width > 4096 || targetImage.Height > 4096)
+				if (targetImage.Width > 4096 || targetImage.Height > 4096)
 				{
 					ModelState.AddModelError(string.Empty, "Image resolution must be less than 4096x4096px.");
 					return View("Index");
@@ -60,18 +59,14 @@ namespace HairSaloonScheduler.Controllers
 			// 3. API'ye dosya gönderme
 			using (var content = new MultipartFormDataContent())
 			{
-				// photo dosyasını ekleyelim
-				var photoContent = new StreamContent(photo.OpenReadStream());
-				photoContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-				content.Add(photoContent, "image", photo.FileName);
 
 				// image_target dosyasını ekleyelim
-				var targetContent = new StreamContent(image_target.OpenReadStream());
+				var targetContent = new StreamContent(aiPhoto.image_target.OpenReadStream());
 				targetContent.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
-				content.Add(targetContent, "image_target", image_target.FileName);
+				content.Add(targetContent, "image_target", aiPhoto.image_target.FileName);
 
 				// hair_type parametresini ekleyelim
-				content.Add(new StringContent(hairType.ToString()), "hair_type");
+				content.Add(new StringContent(aiPhoto.hairType.ToString()), "hair_type");
 
 				// API'ye istek gönderelim
 				var client = new HttpClient();
@@ -81,7 +76,7 @@ namespace HairSaloonScheduler.Controllers
 					RequestUri = new Uri("https://hairstyle-changer.p.rapidapi.com/huoshan/facebody/hairstyle"),
 					Headers =
 					{
-						{ "x-rapidapi-key", "85e7eeb9b2msh2ebbe5c68240f1fp1e0f42jsn4c9859daa16f" },
+						{ "x-rapidapi-key", "99d27b0d02msh11c39c2f73a1290p17f98bjsnd2549c4e2a9d" },
 						{ "x-rapidapi-host", "hairstyle-changer.p.rapidapi.com" }
 					},
 					Content = content
@@ -92,63 +87,25 @@ namespace HairSaloonScheduler.Controllers
 				{
 					var responseBody = await response.Content.ReadAsStringAsync();
 
-					// Yanıtı konsola yazdırma (debugging için)
-					Console.WriteLine("API Response: " + responseBody);
-
 					if (!response.IsSuccessStatusCode)
 					{
 						throw new Exception($"API Error: {response.StatusCode} - {responseBody}");
 					}
+					var values = JsonConvert.DeserializeObject<APIResponse>(responseBody);
 
-					// JSON yanıtını JObject olarak çözümleyelim
-					var responseData = JObject.Parse(responseBody);
+					byte[] imageByteArray = Convert.FromBase64String(values.data.image);
+					System.IO.File.WriteAllBytes(@"C:\Users\ASUS\source\repos\HairSaloonScheduler\wwwroot\Photos\image.png", imageByteArray);
 
-					// Yanıtın tamamını yazdıralım, böylece yapıyı görebiliriz
-					Console.WriteLine("Parsed JSON: " + responseData.ToString());
+					string imageUrl = "/Photos/image.png";
+					ViewBag.ImageUrl = imageUrl;
 
-					// Hata kodunu kontrol edelim
-					var errorCode = (int)responseData["error_code"];
-					if (errorCode != 0)
-					{
-						var errorMessage = responseData["error_detail"]?["message"]?.ToString();
-						ModelState.AddModelError(string.Empty, $"API Error: {errorMessage}");
-						return View("Index");
-					}
+					return View();
 
-					// 'data' alanının var olup olmadığını kontrol et
-					var dataToken = responseData["data"];
-					if (dataToken == null)
-					{
-						ModelState.AddModelError(string.Empty, "Data not found in the response.");
-						return View("Index");
-					}
-
-					// 'image' alanının var olup olmadığını kontrol et
-					var imageToken = dataToken["image"];
-					if (imageToken == null)
-					{
-						ModelState.AddModelError(string.Empty, "Image data not found.");
-						return View("Index");
-					}
-
-					// Orijinal resmin Base64 dönüşümü
-					string base64Photo;
-					using (var ms = new MemoryStream())
-					{
-						base64Photo = Convert.ToBase64String(await photo.OpenReadStream().ToByteArrayAsync());
-					}
-
-					// ViewModel'e ekleyelim
-					var viewModel = new ImageViewModel
-					{
-						OriginalImage = base64Photo,
-						ProcessedImage = imageToken.ToString()
-					};
-
-					return View("Index", viewModel);
 				}
 
+				
 			}
+
 		}
 	}
 }

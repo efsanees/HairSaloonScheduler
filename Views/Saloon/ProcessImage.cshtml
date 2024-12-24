@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "AI Recommended Image Result";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI RECOMMENDED HAIR STYLE</h1>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+                <div class="error">
+                    <p>There were errors processing your request:</p>
+                    <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                                <li>@error.ErrorMessage</li>
+                    }
+                    </ul>
+                </div>
+        }
+        else if (ViewBag.ImageUrl != null)
+        {
+                <p>Here is the recommended hair style:</p>
+                <img src="@ViewBag.ImageUrl" alt="Processed Image" />
+        }
+        else
+        {
+                <p>No image available to display.</p>
+        }
+
+        <a href="/">Return to Home</a>
+    </div>
+</body>
+</html>

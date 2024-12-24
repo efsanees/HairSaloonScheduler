@@ -1,4 +1,5 @@
-﻿
+﻿@model HairSaloonScheduler.Models.AIPhoto
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -117,40 +118,54 @@
 			</div>
 		</div>
 
-		<form method="post" action="/Saloon/ProcessImage" enctype="multipart/form-data">
-			<label for="photo">Select Photo:</label>
-			<input type="file" name="photo" id="photo" accept="image/jpeg, image/jpg, image/png, image/bmp" required />
+		<h3 class="text-center mb-4">CHOOSE YOUR HAIRTYLE WITH AI</h3>
 
-			<label for="image_target">Select Image Target:</label>
-			<input type="file" name="image_target" id="image_target" accept="image/jpeg, image/jpg, image/png, image/bmp" required />
+		<form asp-action="ProcessImage" method="post" enctype="multipart/form-data">
 
-			<label for="hair_type">Select Hairstyle Type:</label>
-			<select name="hair_type" id="hair_type">
-				<option value="101">Bangs</option>
-				<option value="201">Long hair</option>
-				<option value="301">Bangs with long hair</option>
-				<!-- Diğer saç stilleri burada listelenebilir -->
-			</select>
+			<div class="form-group">
+				<label for="targetImage">Upload Image</label>
+				<input asp-for="image_target" type="file" class="form-control" />
+				<span class="text-danger">@Html.ValidationMessageFor(model => model.image_target)</span>
+			</div>
 
-			<button type="submit">Submit</button>
+			<div class="form-group">
+				<label for="hairType">Select Hair Type</label>
+				<select asp-for="hairType" class="form-control">
+					<option value="" disabled selected>Select a hairstyle</option>
+					<option value="101">Bangs (default)</option>
+					<option value="201">Long hair</option>
+					<option value="301">Bangs with long hair</option>
+					<option value="401">Medium hair increase</option>
+					<option value="402">Light hair increase</option>
+					<option value="403">Heavy hair increase</option>
+					<option value="502">Light curling</option>
+					<option value="503">Heavy curling</option>
+					<option value="603">Short hair</option>
+					<option value="801">Blonde</option>
+					<option value="901">Straight hair</option>
+					<option value="1001">Oil-free hair</option>
+					<option value="1101">Hairline fill</option>
+					<option value="1201">Smooth hair</option>
+					<option value="1301">Fill hair gap</option>
+				</select>
+				<span class="text-danger">@Html.ValidationMessageFor(model => model.hairType)</span>
+			</div>
+
+			<button type="submit" class="btn btn-primary">Submit</button>
 		</form>
 
-		@if (!string.IsNullOrEmpty(Model.OriginalImage))
-{
-    <h3>Original Image</h3>
-    <img src="data:image/jpeg;base64,@Model.OriginalImage" alt="Original Image" />
-}
+		@if (ViewBag.ImageUrl != null)
+		{
+			<div class="mt-4">
+				<h3>Result</h3>
+				<img src="@ViewBag.ImageUrl" alt="Generated Image" class="img-fluid" />
+			</div>
+		}
 
-<!-- İşlenmiş Görsel -->
-@if (!string.IsNullOrEmpty(Model.ProcessedImage))
-{
-    <h3>Processed Image</h3>
-    <img src="data:image/jpeg;base64,@Model.ProcessedImage" alt="Processed Image" />
-}
-
-
-
-
+		@section Scripts {
+			@* Add validation scripts *@
+			<partial name="_ValidationScriptsPartial" />
+		}
 
 		<div class="site-section bg-light">
 			<div class="container">
