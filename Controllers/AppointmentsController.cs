@@ -105,6 +105,21 @@ namespace HairSaloonScheduler.Controllers
                         TempData["ErrorMessage"] = "Operation not found.";
                         return RedirectToAction("Create");
                     }
+                    
+                    var abilities=_context.employeeAbilities.Where(x=>x.EmployeeId==employee.EmployeeId).ToList();
+                    foreach(var item in abilities)
+                    {
+                        item.Operation = await _context.operations.FindAsync(item.OperationId);
+                        if(item.Operation==operation)
+                        {
+                            continue;
+                        }
+                        else if(item.Operation!=operation)
+                        {
+							TempData["ErrorMessage"] = "Employee cannot be able to make this operation.Please check our barbers page.";
+							return RedirectToAction("Create");
+						}
+                    }
 
                     appointment.Operation = operation;
                     appointment.Employee = employee;
