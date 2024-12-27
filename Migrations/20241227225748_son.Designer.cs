@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairSaloonScheduler.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20241222210111_FixUserAppointmentRelation")]
-    partial class FixUserAppointmentRelation
+    [Migration("20241227225748_son")]
+    partial class son
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

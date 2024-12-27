@@ -72,7 +72,7 @@ namespace HairSaloonScheduler.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AppointmentDate,OperationId,EmployeeId")] Appointment appointment)
         {
-            if (appointment==null)
+            if (appointment == null)
             {
                 ViewData["EmployeeId"] = new SelectList(_context.employees, "EmployeeId", "EmployeeName", appointment.EmployeeId);
                 ViewData["OperationId"] = new SelectList(_context.operations, "OperationId", "OperationName", appointment.OperationId);
@@ -92,36 +92,41 @@ namespace HairSaloonScheduler.Controllers
                     }
                     appointment.UserId = Guid.Parse(userIdClaim.Value);
 
-                    var employee = _context.employees.FirstOrDefault(x => x.EmployeeId == appointment.EmployeeId);
+					var employee = _context.employees.FirstOrDefault(x => x.EmployeeId == appointment.EmployeeId);
                     if (employee == null)
                     {
                         TempData["ErrorMessage"] = "Employee not found.";
                         return RedirectToAction("Create");
                     }
 
-                    var operation = _context.operations.FirstOrDefault(x => x.OperationId == appointment.OperationId);
+
+					var operation = _context.operations.FirstOrDefault(x => x.OperationId == appointment.OperationId);
                     if (operation == null)
                     {
                         TempData["ErrorMessage"] = "Operation not found.";
                         return RedirectToAction("Create");
                     }
-                    
-                    var abilities=_context.employeeAbilities.Where(x=>x.EmployeeId==employee.EmployeeId).ToList();
-                    foreach(var item in abilities)
-                    {
-                        item.Operation = await _context.operations.FindAsync(item.OperationId);
-                        if(item.Operation==operation)
-                        {
-                            continue;
-                        }
-                        else if(item.Operation!=operation)
-                        {
-							TempData["ErrorMessage"] = "Employee cannot be able to make this operation.Please check our barbers page.";
-							return RedirectToAction("Create");
-						}
-                    }
 
-                    appointment.Operation = operation;
+					var abilities = _context.employeeAbilities.Where(x => x.EmployeeId == employee.EmployeeId).ToList();
+					bool operationFound = false;
+
+					foreach (var item in abilities)
+					{
+						item.Operation = await _context.operations.FindAsync(item.OperationId);
+						if (item.Operation == operation)
+						{
+							operationFound = true;
+							break;
+						}
+					}
+
+					if (!operationFound)
+					{
+						TempData["ErrorMessage"] = "Employee cannot be able to make this operation. Please check our barbers page.";
+						return RedirectToAction("Create");
+					}
+
+					appointment.Operation = operation;
                     appointment.Employee = employee;
 
                     if (!IsEmployeeAvailable(appointment))
@@ -215,6 +220,33 @@ namespace HairSaloonScheduler.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteAppointment(Guid appointmentId)
+        {
+            var appointment = await _context.appointments.FindAsync(appointmentId);
+
+            if (appointment == null)
+            {
+                TempData["ErrorMessage"] = "An error occurred while erasing the appointment.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (appointment.Status == AppointmentStatus.Canceled.ToString())
+            {
+                _context.appointments.Remove(appointment); 
+                await _context.SaveChangesAsync(); 
+                TempData["SuccessMessage"] = "Appointment deleted successfully.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "You can't delete an appointment that is not canceled.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
         private bool IsEmployeeAvailable([Bind("AppointmentDate,OperationId,EmployeeId")] Appointment appointment)
         {

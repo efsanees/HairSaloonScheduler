@@ -77,7 +77,5 @@ namespace HairSaloonScheduler.Controllers
 
 			return View(statistics);
 		}
-
-
 	}
 }

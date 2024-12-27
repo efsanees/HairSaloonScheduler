@@ -86,9 +86,9 @@ namespace HairSaloonScheduler.Controllers
                     ExpiresUtc = DateTime.UtcNow.AddHours(1)
                 };
 
-                await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return RedirectToAction(nameof(Login));
+				return RedirectToAction(nameof(Login));
             }
 
             return View(user);
